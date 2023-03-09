@@ -17,6 +17,7 @@ class HBNBCommand(cmd.Cmd):
     """ HBNBCommand class """
     prompt = "(hbnb) "
     cls = ["BaseModel", "User", "State", "City", "Amenity", "Place", "Review"]
+    cmds = ["all", "count", "show", "destroy", "update"]
 
     def do_quit(self, line):
         """ quit command to exit the program"""
@@ -123,6 +124,72 @@ class HBNBCommand(cmd.Cmd):
                 setattr(obj, args[2], args[3])
                 setattr(obj, "updated_at", datetime.now())
                 models.storage.save()
+
+    def do_count(self, class_name):
+        """ prints the number of instances of a class """
+        cls_name = self.parseline(class_name)[0]
+        counter = 0
+        if cls_name is None:
+            print("** class name missing **")
+        for keys in models.storage.all().keys():
+            if keys.split(".")[0] == cls_name:
+                counter += 1
+        print(counter)
+
+    def default(self, inp):
+        """ converts custom user input into commands """
+        parsed_inp = self.default_error_check(inp)
+        if parsed_inp is None:
+            return
+        cls_name, cmd, args = parsed_inp
+        if cmd == "all":
+            return self.do_all(cls_name)
+        if cmd == "count":
+            return self.do_count(cls_name)
+        if cmd == "show":
+            return self.do_show(cls_name + " " + args)
+        if cmd == "destroy":
+            return self.do_destroy(cls_name + " " + args)
+        if cmd == "update":
+            if "{" in args and "}" in args:
+                self.evaluate_kwargs(cls_name, args)
+            else:
+                self.evaluate_args(cls_name, args)
+
+    def default_error_check(self, inp):
+        """ checks for errors in input for default method """
+        if "." not in inp:
+            return(print("** invalid input **"))
+        cls_name = inp.split(".")[0]
+        if cls_name not in self.cls:
+            return(print("** class doesn't exist **"))
+        idx = inp.index(".")
+        cmd = inp[idx + 1:]
+        if "(" not in cmd and ")" not in cmd:
+            return(print("** invalid input **"))
+        cmd_left = cmd.split("(")[0]
+        cmd_right = cmd.split("(")[-1][:-1]
+        if cmd_left not in self.cmds:
+            return(print("** invalid command **"))
+        return [cls_name, cmd_left, cmd_right]
+
+    def evaluate_kwargs(self, cls_name, cmd):
+        """ converts string to correct format for update method """
+        idx = cmd.index(",")
+        cls_id = cmd[:idx].replace("\"", "")
+        string_d = cmd[idx + 1:]
+        d = eval(string_d)
+        for k, v in d.items():
+            arg = cls_name + " " + cls_id + " " + k + " " + '"' + str(v) + '"'
+            self.do_update(arg)
+
+    def evaluate_args(self, cls_name, cmd):
+        """ converts string to correct format for update method """
+        arg = cls_name + " "
+        for i in cmd.split(", ")[:-1]:
+            arg += i.replace("\"", "") + " "
+        arg += cmd.split(", ")[-1]
+        self.do_update(arg)
 
 
 if __name__ == "__main__":
