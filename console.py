@@ -20,11 +20,11 @@ class HBNBCommand(cmd.Cmd):
     cmds = ["all", "count", "show", "destroy", "update"]
 
     def do_quit(self, line):
-        """ quit command to exit the program"""
+        """ quit command to exit the program """
         return True
 
     def do_EOF(self, line):
-        """ Ctrl-D command to exit the program"""
+        """ Ctrl-D command to exit the program """
         print()
         return True
 
@@ -33,8 +33,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, class_name):
-        """ creates a new instance of BaseModel, saves it (to the JSON file)
-        and prints the id """
+        """ creates a new instance, saves it, and prints id """
         cls_name = self.parseline(class_name)[0]
         if cls_name is None:
             print("** class name missing **")
@@ -46,8 +45,7 @@ class HBNBCommand(cmd.Cmd):
             print(new_obj.id)
 
     def do_show(self, cls_and_id):
-        """ prints the string representation of an instance based on the
-        class name and id """
+        """prints the str repr of an instance with class name and id"""
         cls_name = self.parseline(cls_and_id)[0]
         cls_id = self.parseline(cls_and_id)[1]
         if cls_name is None:
@@ -81,8 +79,7 @@ class HBNBCommand(cmd.Cmd):
                 models.storage.save()
 
     def do_all(self, class_name):
-        """ prints all string representation of all instances based or not
-        on the class name """
+        """ prints all string representation of all instances """
         cls_name = self.parseline(class_name)[0]
         objs = models.storage.all()
         if cls_name is None:
@@ -97,8 +94,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def do_update(self, line):
-        """ updates an instance based on the class name and id by adding or
-        updating attribute """
+        """ updates an instance based on the class name and id """
         args = shlex.split(line)
         args_size = len(args)
         if args_size == 0:
