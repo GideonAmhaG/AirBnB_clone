@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-This module contains the unittest for the console.py file
-"""
+"""This module contains the unittest for the console.py file"""
 import unittest
 import sys
 import os
@@ -12,9 +10,7 @@ from models import storage
 
 
 class TestConsole(unittest.TestCase):
-    """
-    Test console.py
-    """
+    """Test console.py"""
     def setUp(self):
         self.mock_stdin = create_autospec(sys.stdin)
         self.mock_stdout = create_autospec(sys.stdout)
@@ -67,7 +63,7 @@ class TestConsole(unittest.TestCase):
         self.assertEqual("** class doesn't exist **\n", sys.stdout.getvalue())
         self.flush_buffer()
         self.cli.onecmd("show BaseModel")
-        self.assertEqual("** instance id missing **\n", sys.stdout.getvalue())
+        self.assertEqual("** no instance found **\n", sys.stdout.getvalue())
         self.flush_buffer()
         self.cli.onecmd("show BaseModel 123")
         self.assertEqual("** no instance found **\n", sys.stdout.getvalue())
@@ -83,7 +79,7 @@ class TestConsole(unittest.TestCase):
         self.assertEqual("** class doesn't exist **\n", sys.stdout.getvalue())
         self.flush_buffer()
         self.cli.onecmd("destroy BaseModel")
-        self.assertEqual("** instance id missing **\n", sys.stdout.getvalue())
+        self.assertEqual("** no instance found **\n", sys.stdout.getvalue())
         self.flush_buffer()
         self.cli.onecmd("destroy BaseModel 123")
         self.assertEqual("** no instance found **\n", sys.stdout.getvalue())
